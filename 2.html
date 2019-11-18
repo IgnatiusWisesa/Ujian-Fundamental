@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Madding</title>
+    <style>
+        tr,
+        td,
+        table {
+            border: 2.5px solid rgb(68, 1, 1);
+            border-collapse: collapse;
+            padding: 10px
+        }
+    </style>
+</head>
+<body>
+    <center>
+        <div id="DIV">
+            <center>
+            <h3>Username</h3>
+            <input id="Username" type="text" style="text-align: center;" placeholder="Masukan Username">
+            <h3>Password</h3>
+            <input id="Password" type="password" style="text-align: center;" placeholder="Masukan Password">
+            <br><br><br>
+                <button onclick="cekUserAdmin()">Login</button>
+            <br><br><br>
+            </center>
+        </div>
+    </center>
+
+
+        <center>
+            <table>
+                <tr>
+                    <td>No.</td>
+                    <td>Kegiatan</td>
+                    <td>Hari</td>
+                    <td>Poster</td>
+                    <td>Act</td>
+                </tr>
+                <tbody id="tampilan"></tbody>
+            </table>
+        </center>
+        <h2 id="tampilLogin" style="text-align: center;"></h2>
+        <p id="LO"></p>
+</body>
+    <script>
+        class Olahraga{
+            constructor(kegiatan,hari,gambar){
+                this.kegiatan = kegiatan
+                this.hari = hari
+                this.gambar = gambar
+            }
+        }
+
+        class Orang{
+            constructor(username, password, golongan){
+                this.username = username
+                this.password = password
+                this.golongan = golongan
+            }
+        }
+
+        ArrayOlahraga = [new Olahraga('LARI','Senin','https//lari.com'),
+                        new Olahraga('ESTAFET','Selasa','https//estafet.com')]
+
+        ArrayOrang = [new Orang('DINO','12','USER'),
+                    new Orang('ADMIN','11','ADMIN')]
+
+        cekUserAdmin =()=>{
+            username = document.getElementById('Username').value
+            username = username.toUpperCase()
+            password = document.getElementById('Password').value
+
+            console.log(username)
+            console.log(password)
+            tampilan(username, password)
+        }
+
+        tampilan =(username, password)=>{
+            USER = false
+            PASS = false
+            GOL = ''
+
+            for(i=0;i<ArrayOrang.length;i++){
+                if(ArrayOrang[i].username==username && ArrayOrang[i].password==password){
+                    USER=true
+                    PASS=true
+                    if(ArrayOrang[i].golongan=='USER'){
+                        GOL = 'USER'
+                    }
+                    else if(ArrayOrang[i].golongan=='ADMIN'){
+                        GOL = 'ADMIN'
+                    }
+                }
+                else{}
+            }
+
+            if(PASS==false){
+                document.getElementById('tampilLogin').innerHTML = 'Password Salah'
+            }
+            else if(GOL=='USER' && PASS){
+                output = ''
+                for(i=0;i<ArrayOlahraga.length;i++){
+                    output += ` <tr>
+                                    <td>${i+1}</td>
+                                    <td>${ArrayOlahraga[i].kegiatan}</td>
+                                    <td>${ArrayOlahraga[i].hari}</td>
+                                    <td><img src= ${ArrayOlahraga[i].gambar} width='150px' height='100px'></td>
+                                </tr>`
+                }
+                document.getElementById('tampilan').innerHTML = output
+                document.getElementById('tampilLogin').innerHTML = username
+                document.getElementById('LO').innerHTML = `<center><button onclick="logout()">LogOut</button></center>`
+            }
+            else if(GOL=='ADMIN' && PASS){
+                output = ''
+                for(i=0;i<ArrayOlahraga.length;i++){
+                    output += ` <tr>
+                                    <td>${i+1}</td>
+                                    <td>${ArrayOlahraga[i].kegiatan}</td>
+                                    <td>${ArrayOlahraga[i].hari}</td>
+                                    <td><img src= ${ArrayOlahraga[i].gambar} width='150px' height='100px'></td>
+                                    <td><button onclick="hapus(${[i]})">delete</button><button onclick="edit(${[i]})">edit</button></td>
+                                </tr>`
+                }
+                document.getElementById('tampilan').innerHTML = output
+                document.getElementById('tampilLogin').innerHTML = username
+                document.getElementById('LO').innerHTML = `<center><button onclick="logout()">LogOut</button></center>`
+            }
+        
+
+
+            document.getElementById('Username').value = ''
+            document.getElementById('Password').value = ''
+        }
+        
+        hapus = (index) => {
+            output = ''
+                for(i=0;i<ArrayOlahraga.length;i++){
+                    output += ` <tr>
+                                    <td>${i+1}</td>
+                                    <td>${ArrayOlahraga[i].kegiatan}</td>
+                                    <td>${ArrayOlahraga[i].hari}</td>
+                                    <td><img src= ${ArrayOlahraga[i].gambar} width='150px' height='100px'></td>
+                                    <td><button onclick="hapusNo(${[i]})">No</button><button onclick="hapusYes(${[i]})">Yes</button></td>
+                                </tr>`
+                }
+                document.getElementById('tampilan').innerHTML = output
+                document.getElementById('tampilLogin').innerHTML = username
+                document.getElementById('LO').innerHTML = `<center><button onclick="logout()">LogOut</button></center>`
+        }
+
+        hapusNo =(index)=>{
+            tampilan('ADMIN', '11')
+        }
+
+        hapusYes =(index)=>{
+            ArrayOlahraga.splice(index,1)
+            tampilan('ADMIN', '11')
+        }
+
+        edit =(index)=>{
+            indexedit = index
+            output = ''
+                for(i=0;i<ArrayOlahraga.length;i++){
+                    if(indexedit==i){
+                        output +=  `<tr>
+                                    <td>${i+1}</td>
+                                    <td><input type="text" id="editkegiatan${index}"></td>
+                                    <td><select id="edithari${index}">
+                                    <option> Senin</option>
+                                    <option> Selasa</option>
+                                    <option> Rabu</option>
+                                    <option> Kamis</option>
+                                    <option> Jumat</option>
+                                    <option> Sabtu</option>
+                                    <option> Minggu</option>
+                                </select>    
+                                    </td>
+                                    <td><input type="text" id="editgambar${index}"></td>
+                                    <td><button onclick="cancel()">Cancel</button><button onclick="save(${[i]})">Save</button></td>
+                                </tr>`
+                    }
+                    else{
+                        output += ` <tr>
+                                    <td>${i+1}</td>
+                                    <td>${ArrayOlahraga[i].kegiatan}</td>
+                                    <td>${ArrayOlahraga[i].hari}</td>
+                                    <td><img src= ${ArrayOlahraga[i].gambar} width='150px' height='100px'></td>
+                                    <td><button onclick="hapusNo(${[i]})">No</button><button onclick="hapusYes(${[i]})">Yes</button></td>
+                                </tr>`
+                    }
+                }
+                document.getElementById('tampilan').innerHTML = output
+                document.getElementById('tampilLogin').innerHTML = username
+                document.getElementById('LO').innerHTML = `<center><button onclick="logout()">LogOut</button></center>`
+        }
+
+        cancel =()=>{
+            tampilan('ADMIN', '11')
+        }
+
+        save =(index)=>{
+            kegiatan = (document.getElementById(`editkegiatan${index}`).value)
+            ArrayOlahraga[index].kegiatan = kegiatan.toUpperCase()
+            ArrayOlahraga[index].hari = document.getElementById(`edithari${index}`).value
+            ArrayOlahraga[index].gambar = document.getElementById(`editgambar${index}`).value
+            tampilan('ADMIN', '11')
+        }
+
+        logout =()=>{
+            document.getElementById('tampilan').innerHTML = ''
+            document.getElementById('tampilLogin').innerHTML = ''
+            document.getElementById('LO').innerHTML = ''
+        }
+
+
+
+    </script>
+
+</html>
